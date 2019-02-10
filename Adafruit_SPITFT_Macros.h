@@ -106,7 +106,14 @@ static inline uint8_t _avr_spi_read(void) {
     #define HSPI_WRITE_PIXELS(c,l)   for(uint32_t i=0; i<(l); i+=2){ HSPI_WRITE(((uint8_t*)(c))[i+1]); HSPI_WRITE(((uint8_t*)(c))[i]); }
 #endif
 
-  #define SPI_BEGIN()             if(_sclk < 0){_spi->begin();}
+// kevinh yucky - FIXME - modified for TTGO T4
+#include "board.h"
+#ifndef TFT_CS
+  #define SPI_BEGIN()             if(_sclk < 0) {_spi->begin();}
+#else
+  #define SPI_BEGIN()             if(_sclk < 0) {_spi->begin(TFT_CLK, TFT_MISO, TFT_MOSI, TFT_CS);}
+#endif
+
   #define SPI_BEGIN_TRANSACTION() if(_sclk < 0){HSPI_BEGIN_TRANSACTION();}
   #define SPI_END_TRANSACTION()   if(_sclk < 0){HSPI_END_TRANSACTION();}
   #define SPI_WRITE16(s)          if(_sclk < 0){HSPI_WRITE16(s);}else{SSPI_WRITE16(s);}
